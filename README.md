@@ -1,6 +1,6 @@
 # Joy Watcher
 
-`sensor_msgs/msg/Joy` の `joy` トピックを購読し、スティック、トリガー、全ボタンの値を表示します。軸は受信した値をそのまま表示します。ボタンは整数値を小数表示します。受信前や指定軸が存在しない場合は `N/A` です。
+`sensor_msgs/msg/Joy` の `joy` トピックをサブスクし、スティック、トリガー、全ボタンの値を表示します。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -9,14 +9,26 @@ source install/setup.bash
 ros2 run joy_watcher joy_watcher_node
 ```
 
-別途 `joy` トピックを配信するノードが必要です。トピック名は通常の ROS リマップで変更できます。
 
+別途 `joy` トピックを配信するノードが必要です。
 ```bash
-ros2 run joy_watcher joy_watcher_node --ros-args -r joy:=/controller/joy
+ros2 run joy joy_node
 ```
 
-軸の既定値は左スティック X/Y が 0/1、右スティック X/Y が 3/2、左/右トリガーが 4/5 です。機器やドライバーにより配置やトリガーの値の方向が異なるため、`ros2 topic echo /joy` などで軸の値を確認してパラメータを設定してください。
 
+ここで使用している機器に設定を合わせてください。
+```cpp
+constexpr std::array<AxisDefinition, 6> kAxes{{
+    {"left_stick_x", "Left stick X", 0},
+    {"left_stick_y", "Left stick Y", 1},
+    {"right_stick_x", "Right stick X", 3},
+    {"right_stick_y", "Right stick Y", 2},
+    {"left_trigger", "Left trigger", 4},
+    {"right_trigger", "Right trigger", 5},
+}};
+```
+
+起動引数でも設定可能です。
 ```bash
 ros2 run joy_watcher joy_watcher_node --ros-args -p right_stick_x:=2 -p right_stick_y:=3 -p left_trigger:=4 -p right_trigger:=5
 ```
